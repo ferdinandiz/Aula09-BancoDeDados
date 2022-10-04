@@ -1,12 +1,15 @@
 package com.fer.aula09_bancodedados.Controller;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.fer.aula09_bancodedados.Model.Pokemon;
 
 public class PokemonDataBase extends SQLiteOpenHelper {
 
@@ -33,6 +36,22 @@ public class PokemonDataBase extends SQLiteOpenHelper {
               c_tipo + " TEXT, " +
               c_numero + " TEXT)";
       sqLiteDatabase.execSQL(query);
+   }
+
+   public Pokemon selectPokemon(int cod){
+      SQLiteDatabase db = this.getReadableDatabase();
+      Cursor cursor = db.query( tb_pokemon, new String[]{
+              c_cod, c_nome, c_tipo, c_numero
+      }, c_cod+" = ?",
+              new String[]{String.valueOf(cod)},
+              null, null, null);
+      if(cursor != null) cursor.moveToFirst();
+      else return null;
+      Pokemon pkm = new Pokemon(Integer.parseInt(cursor.getString(0)),
+              cursor.getString(1),
+              cursor.getString(2),
+              cursor.getString(3));
+      return pkm;
    }
 
    @Override
